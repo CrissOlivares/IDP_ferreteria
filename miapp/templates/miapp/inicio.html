@@ -1,0 +1,103 @@
+{% extends 'miapp/base.html' %} {% load static %}
+
+
+{% block title %}Ferremas{% endblock %}
+<img src="{% static 'imagenes/taladro.jpg' %}" alt="Taladro" width="50">
+{% block content %}
+<!-- titulo -->
+<div class="bg-dark text-white text-center py-5" style="background-image: url('/static/img/herramientas.jpg'); background-size: cover; background-position: center;">
+    <div class="bg-dark bg-opacity-75 p-5 rounded">
+        <h1 class="display-4 fw-bold">¡TODO LO QUE NECESITAS PARA CONSTRUIR TUS IDEAS!</h1>
+        <div class="mt-4 d-flex justify-content-center gap-3">
+            <a href="#" class="btn btn-warning btn-lg">Explorar productos</a>
+            <a href="#" class="btn btn-outline-light btn-lg">Verofertas</a>
+        </div>
+    </div>
+</div>
+
+<!-- Categorías -->
+<section class="py-5 text-center">
+    <h2 class="mb-4">Explora por categoría</h2>
+    <div class="row justify-content-center">
+        <div class="col-6 col-md-3 mb-4">
+            <div class="p-3 border rounded bg-light">
+                <img src="/static/img/icono-martillo.png" alt="" width="50">
+                <h5 class="mt-3">Herramientas manuales</h5>
+                <a href="#" class="btn btn-outline-warning mt-2">Ver más</a>
+            </div>
+        </div>
+        
+
+<div class="col-6 col-md-3 mb-4">
+    <div class="p-3 border rounded bg-light text-center">
+        <img src="{% static 'imagenes/taladro.jpg' %}" alt="Taladro" width="50">
+        <h5 class="mt-3">Herramientas eléctricas</h5>
+        <a href="#" class="btn btn-outline-warning mt-2">Ver más</a>
+    </div>
+</div>
+
+        <div class="col-6 col-md-3 mb-4">
+            <div class="p-3 border rounded bg-light">
+                <img src="/static/img/icono-brocha.png" alt="" width="50">
+                <h5 class="mt-3">Pinturas y acabados</h5>
+                <a href="#" class="btn btn-outline-warning mt-2">Ver más</a>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+            <div class="p-3 border rounded bg-light">
+                <img src="/static/img/icono-wincha.png" alt="" width="50">
+                <h5 class="mt-3">Construcción</h5>
+                <a href="#" class="btn btn-outline-warning mt-2">Ver más</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Ofertas -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Ofertas destacadas</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <img src="/static/img/taladro.png" class="card-img-top p-4" alt="Taladro">
+                    <div class="card-body">
+                        <p class="text-muted text-decoration-line-through">$114.99</p>
+                        <h5 class="card-title text-danger fw-bold">$89.99</h5>
+                        <a href="#" class="btn btn-warning">Agregar al carrito</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <img src="/static/img/martillo.png" class="card-img-top p-4" alt="Martillo">
+                    <div class="card-body">
+                        <p class="text-muted text-decoration-line-through">$14.99</p>
+                        <h5 class="card-title text-danger fw-bold">$14.99</h5>
+                        <a href="#" class="btn btn-warning">Agregar al carrito</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <img src="/static/img/wincha.png" class="card-img-top p-4" alt="Wincha">
+                    <div class="card-body">
+                        <p class="text-muted text-decoration-line-through">$13.99</p>
+                        <h5 class="card-title text-danger fw-bold">$7.99</h5>
+                        <a href="#" class="btn btn-warning">Agregar al carrito</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mapa y footer -->
+<section class="bg-white py-5">
+    <div class="container text-center">
+        <h4>¿Dónde estamos?</h4>
+        <p>📍 Av. Lorem Ipsum 123, Ciudad</p>
+        <p>📞 +56 9 1234 5678 | ✉️ contacto@ferreteriapepe.cl</p>
+    </div>
+</section>
+{% endblock %}
