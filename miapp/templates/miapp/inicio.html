@@ -5,12 +5,14 @@
 <img src="{% static 'imagenes/taladro.jpg' %}" alt="Taladro" width="50">
 {% block content %}
 <!-- titulo -->
-<div class="bg-dark text-white text-center py-5" style="background-image: url('{% static "img/herramientas.jpg" %}'); background-size: cover; background-position: center;">
-    <div class="bg-dark bg-opacity-75 p-5 rounded">
-        <h1 class="display-4 fw-bold">¡TODO LO QUE NECESITAS PARA CONSTRUIR TUS IDEAS!</h1>
+<div class="position-relative text-center text-white rounded" style="height: 300px; overflow: hidden;">
+    <img src="{% static 'imagenes/bodega.jpg' %}" alt="Fondo" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 2;"></div>
+    <div class="position-relative d-flex flex-column justify-content-center align-items-center h-100 p-5" style="z-index: 3;">
+        <h1 class="display-4 fw-bold" style="color: rgba(255, 255, 255, 0.9);">¡TODO LO QUE NECESITAS PARA CONSTRUIR TUS IDEAS!</h1>
         <div class="mt-4 d-flex justify-content-center gap-3">
             <a href="#" class="btn btn-warning btn-lg">Explorar productos</a>
-            <a href="#" class="btn btn-outline-light btn-lg">Verofertas</a>
+            <a href="#" class="btn btn-outline-light btn-lg">Ver ofertas</a>
         </div>
     </div>
 </div>
@@ -21,7 +23,7 @@
     <div class="row justify-content-center">
         <div class="col-6 col-md-3 mb-4">
             <div class="p-3 border rounded bg-light">
-                <img src="{% static 'img/icono-martillo.png' %}" alt="" width="100px">
+                <img src="{% static 'imagenes/herramientas.jpg' %}" alt="" width="100px">
                 <h5 class="mt-3">Herramientas manuales</h5>
                 <a href="#" class="btn btn-outline-warning mt-2">Ver más</a>
             </div>
@@ -44,7 +46,7 @@
         </div>
         <div class="col-6 col-md-3 mb-4">
             <div class="p-3 border rounded bg-light">
-                <img src="{% static 'img/icono-wincha.png' %}" alt="" style="width:30px">
+                <img src="{% static 'imagenes/casco.jpg' %}" alt="" style="width:100px">
                 <h5 class="mt-3">Construcción</h5>
                 <a href="#" class="btn btn-outline-warning mt-2">Ver más</a>
             </div>
@@ -83,7 +85,7 @@
                 <div class="card h-100 text-center">
                     <h5 class="card-title fw-bold large-text">Cinta Metrica</h5>
                     <img src="{% static 'imagenes/cintademedicion.png' %}" class="card-img-top p-4" alt="Wincha">
-                    <div class="card-body">
+                    <div class="card-body hover-scale">
                         <p class="text-muted text-decoration-line-through">$37.000</p>
                         <h5 class="card-title text-danger fw-bold">$25.990</h5>
                         <a href="#" class="btn btn-warning">Agregar al carrito</a>
