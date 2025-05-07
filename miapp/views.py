@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Producto, Carrito  
 from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+
 
 def inicio(request):
-    productos = Producto.objects.all()  
+    liberar_stock_expirado()  # Libera productos reservados hace más de 30 minutos
+    productos = Producto.objects.all()
     return render(request, 'miapp/inicio.html', {'productos': productos})
 
 def agregar_al_carrito(request, producto_id):
@@ -37,3 +41,13 @@ def eliminar_del_carrito(request, carrito_id):
 
     item.delete()
     return redirect('ver_carrito')
+
+def liberar_stock_expirado():
+    tiempo_limite = timezone.now() - timedelta(minutes=1)
+    items_expirados = Carrito.objects.filter(fecha_agregado__lt=tiempo_limite)
+
+    for item in items_expirados:
+        producto = item.producto
+        producto.stock += item.cantidad
+        producto.save()
+        item.delete()    
