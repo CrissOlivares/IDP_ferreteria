@@ -51,3 +51,34 @@ def liberar_stock_expirado():
         producto.stock += item.cantidad
         producto.save()
         item.delete()    
+def aumentar_cantidad(request, carrito_id):
+    item = get_object_or_404(Carrito, pk=carrito_id)
+    producto = item.producto
+
+    if producto.stock > 0:
+        item.cantidad += 1
+        item.save()
+
+        producto.stock -= 1
+        producto.save()
+    else:
+        messages.warning(request, f"No hay más stock disponible de '{producto.nombre}'.")
+
+    return redirect('ver_carrito')
+
+def disminuir_cantidad(request, carrito_id):
+    item = get_object_or_404(Carrito, pk=carrito_id)
+    producto = item.producto
+
+    if item.cantidad > 1:
+        item.cantidad -= 1
+        item.save()
+        producto.stock += 1
+        producto.save()
+    else:
+        # Si solo queda 1, eliminar el ítem completo
+        producto.stock += 1
+        producto.save()
+        item.delete()
+
+    return redirect('ver_carrito')
