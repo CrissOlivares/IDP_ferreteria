@@ -5,6 +5,17 @@
 <div class="container py-4">
     <h2 class="mb-4">Carrito de Compras</h2>
 
+    <!-- Mostrar mensajes -->
+    {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+                <div class="alert alert-warning">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {% if carrito %}
         <ul class="list-group">
             {% for item in carrito %}
@@ -21,3 +32,4 @@
     {% endif %}
 </div>
 {% endblock %}
+
