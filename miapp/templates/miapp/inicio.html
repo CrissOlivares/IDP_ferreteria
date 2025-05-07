@@ -57,17 +57,23 @@
     <div class="container">
         <h2 class="text-center mb-4">Ofertas destacadas</h2>
         <div class="row justify-content-center">
+
+            {% for producto in productos %}
+            {% if producto.nombre == "taladro" %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100 text-center">
-                    <h5 class="card-title fw-bold large-text">Taladro Bauker</h5>
-                    <img src="{% static 'imagenes/taladro.jpg' %}" class="card-img-top p-4" alt="Taladro" style="height: 350px; object-fit: cover;">
+                    <h5 class="card-title fw-bold large-text">{{ producto.nombre }}</h5>
+                    <img src="{% static 'imagenes/taladro.jpg' %}" class="card-img-top p-4" alt="{{ producto.nombre }}" style="height: 350px; object-fit: cover;">
                     <div class="card-body">
-                        <p class="text-muted text-decoration-line-through">$70.000</p>
-                        <h5 class="card-title text-danger fw-bold">$54.990</h5>
-                        <a href="#" class="btn btn-warning">Agregar al carrito</a>
+                        <p class="text-muted text-decoration-line-through">${{ producto.precio|floatformat:0|add:"15000" }}</p>
+                        <h5 class="card-title text-danger fw-bold">${{ producto.precio }}</h5>
+                        <a href="{% url 'agregar_al_carrito' producto.id %}" target="_blank" class="btn btn-warning">Agregar al carrito</a>
                     </div>
                 </div>
             </div>
+            {% endif %}
+            {% endfor %}
+
             <div class="col-md-4 mb-4">
                 <div class="card h-100 text-center">
                     <h5 class="card-title fw-bold large-text">Martillo De Thor</h5>
@@ -79,6 +85,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-4 mb-4">
                 <div class="card h-100 text-center">
                     <h5 class="card-title fw-bold large-text">Cinta Metrica</h5>
@@ -90,9 +97,11 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
+
 
 <!-- Mapa y footer -->
 <section class="bg-white py-5">
