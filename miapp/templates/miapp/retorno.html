@@ -1,0 +1,26 @@
+{% extends 'miapp/base.html' %}
+{% block title %}Resultado del Pago{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Resultado del Pago</h2>
+
+    {% if respuesta.status == "AUTHORIZED" %}
+        <div class="alert alert-success">
+            ¡Pago aprobado exitosamente!
+        </div>
+        <ul>
+            <li>Monto: ${{ respuesta.amount }}</li>
+            <li>Código de autorización: {{ respuesta.authorization_code }}</li>
+            <li>Fecha: {{ respuesta.transaction_date }}</li>
+            <li>Últimos 4 dígitos tarjeta: **** {{ respuesta.card_detail.card_number }}</li>
+        </ul>
+    {% else %}
+        <div class="alert alert-danger">
+            El pago fue rechazado o no se pudo procesar.
+        </div>
+        <p>Estado: {{ respuesta.status }}</p>
+        <p>Código respuesta: {{ respuesta.response_code }}</p>
+    {% endif %}
+</div>
+{% endblock %}

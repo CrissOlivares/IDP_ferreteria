@@ -3,8 +3,41 @@ from .models import Producto, Carrito
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from .transbank_config import get_transaction
+import uuid
+def retorno(request):
+    token = request.GET.get('token_ws')
+    transaction = get_transaction()
+    response = transaction.commit(token)
 
+    if response['status'] == 'AUTHORIZED':
+        Carrito.objects.all().delete()
+        messages.success(request, "¡Pago exitoso!")
+    else:
+        messages.error(request, "El pago fue rechazado.")
 
+    return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
+def pagar(request):
+    carrito_items = Carrito.objects.all()
+
+    if not carrito_items:
+        messages.warning(request, "El carrito está vacío.")
+        return redirect('ver_carrito')
+
+    # Calcular el total
+    total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+
+    # Crear orden y sesión única
+    buy_order = str(uuid.uuid4())[:26]  # Orden única, limitada a 26 caracteres
+    session_id = request.session.session_key or str(uuid.uuid4())[:61]
+    return_url = 'http://localhost:8000/retorno/'  # Cambia esto a tu dominio en producción
+
+    transaction = get_transaction()
+    response = transaction.create(buy_order, session_id, total, return_url)
+
+    # Opcional: guardar temporalmente los datos de la compra en sesión o base de datos si necesitas mostrarlos luego
+
+    return redirect(response['url'] + '?token_ws=' + response['token'])
 def inicio(request):
     liberar_stock_expirado()  # Libera productos reservados hace más de 30 minutos
     productos = Producto.objects.all()
