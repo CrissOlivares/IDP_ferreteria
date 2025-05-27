@@ -3,6 +3,7 @@ from .models import Producto, Carrito
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth import authenticate, login
 
 
 def inicio(request):
@@ -82,3 +83,17 @@ def disminuir_cantidad(request, carrito_id):
         item.delete()
 
     return redirect('ver_carrito')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('/')  # Redirige a inicio o donde tú quieras
+        else:
+            messages.error(request, 'Usuario o contraseña incorrectos')
+    
+    return render(request, 'miapp/login.html')
