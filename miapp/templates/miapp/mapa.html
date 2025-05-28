@@ -1,0 +1,23 @@
+{% extends 'miapp/base.html' %}
+{% block title %}Mapa DUOC{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">Ubicación de DUOC UC - Sede Viña del Mar</h2>
+<div id="map" style="height: 500px;"></div>
+
+<!-- Script para Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    const duocCoords = [-33.015348, -71.551750]; // Latitud, Longitud de DUOC Viña del Mar
+
+    var map = L.map('map').setView(duocCoords, 17); // Zoom 17 = vista cercana
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker(duocCoords).addTo(map)
+        .bindPopup('DUOC UC - Sede Viña del Mar')
+        .openPopup();
+</script>
+{% endblock %}

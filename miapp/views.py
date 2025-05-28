@@ -117,3 +117,6 @@ def registro(request):
             return redirect('inicio')
 
     return render(request, 'miapp/registro.html')
+
+def mapa(request):
+    return render(request, 'miapp/mapa.html')

@@ -107,11 +107,16 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-  var map = L.map('map').setView([-33.4489, -70.6693], 13); // Santiago, Chile
+  var map = L.map('map').setView([-33.03336, -71.53286], 17); // DUOC Viña del Mar
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
+
+    // Agregar un marcador en la sede
+  L.marker([-33.034, -71.53340]).addTo(map)
+    .bindPopup('Duoc UC - Sede Viña del Mar')
+    .openPopup();
 </script>
 
 </section>
