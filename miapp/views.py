@@ -22,7 +22,7 @@ def retorno(request):
         messages.error(request, "Token no recibido desde Webpay.")
         return redirect('ver_carrito')
 
-    # 🟢 Recuperar el usuario desde la sesión
+    # recurpar la sesion 
     user_id = request.session.get('usuario_pago_id')
     if not user_id:
         messages.error(request, "No se pudo verificar al usuario para completar la compra.")
@@ -77,7 +77,7 @@ def pagar(request):
 
     return redirect(response['url'] + '?token_ws=' + response['token'])
 def inicio(request):
-    liberar_stock_expirado()  # Libera productos reservados hace más de 30 minutos
+    liberar_stock_expirado()  
     productos = Producto.objects.all()
     return render(request, 'miapp/inicio.html', {'productos': productos})
 

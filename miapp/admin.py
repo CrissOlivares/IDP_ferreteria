@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Producto, Carrito, Orden, ItemOrden
 
-# Mostrar los productos comprados dentro de cada orden (inline)
+# Mostrar los productos comprados dentro de cada orden 
 class ItemOrdenInline(admin.TabularInline):
     model = ItemOrden
     extra = 0
@@ -21,7 +21,7 @@ class OrdenAdmin(admin.ModelAdmin):
             for item in obj.items.all()
             if item.producto
         )
-        return f"${total:,}".replace(",", ".")  # formato con punto para miles
+        return f"${total:,}".replace(",", ".") 
     total_gastado.short_description = 'Total Gastado'
 
 # Registro de modelos

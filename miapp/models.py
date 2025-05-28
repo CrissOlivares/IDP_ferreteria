@@ -16,7 +16,7 @@ class Carrito(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
     fecha_agregado = models.DateTimeField(auto_now_add=True)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # ← ESTA LÍNEA
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True) 
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"
@@ -36,6 +36,6 @@ class ItemOrden(models.Model):
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"
 
-#clases admin
+
 
 
