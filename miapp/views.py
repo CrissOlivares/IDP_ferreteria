@@ -7,14 +7,26 @@ from .transbank_config import get_transaction
 import uuid
 def retorno(request):
     token = request.GET.get('token_ws')
-    transaction = get_transaction()
-    response = transaction.commit(token)
 
-    if response['status'] == 'AUTHORIZED':
-        Carrito.objects.all().delete()
-        messages.success(request, "¡Pago exitoso!")
-    else:
-        messages.error(request, "El pago fue rechazado.")
+    # ✅ Validación inmediata
+    if not token:
+        messages.error(request, "Token no recibido desde Webpay.")
+        return redirect('ver_carrito')
+
+    transaction = get_transaction()
+    try:
+        response = transaction.commit(token)
+
+        if response['status'] == 'AUTHORIZED':
+            Carrito.objects.all().delete()
+            messages.success(request, "¡Pago exitoso!")
+        else:
+            messages.error(request, "El pago fue rechazado.")
+    except Exception as e:
+        messages.error(request, f"Error al procesar el pago: {e}")
+        return redirect('ver_carrito')
+
+    return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
 
     return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
 def pagar(request):

@@ -1,6 +1,32 @@
 {% extends 'miapp/base.html' %}
+{% block title %}Resultado del Pago{% endblock %}
 
 {% block content %}
-<h2>Resultado del pago</h2>
-<p>Estado: {{ respuesta.status }}</p>
+<div class="container py-4">
+    <h2 class="mb-4">Resultado del Pago</h2>
+
+    {% if respuesta.status == "AUTHORIZED" and respuesta.response_code == 0 %}
+        <div class="alert alert-success">
+            ¡Pago aprobado exitosamente!
+        </div>
+
+        <div class="card p-3">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Monto:</strong> ${{ respuesta.amount }}</li>
+                <li class="list-group-item"><strong>Orden de compra:</strong> {{ respuesta.buy_order }}</li>
+                <li class="list-group-item"><strong>Código de autorización:</strong> {{ respuesta.authorization_code }}</li>
+                <li class="list-group-item"><strong>Fecha:</strong> {{ respuesta.transaction_date }}</li>
+                <li class="list-group-item"><strong>Tarjeta:</strong> **** {{ respuesta.card_detail.card_number }}</li>
+                <li class="list-group-item"><strong>Tipo de pago:</strong> {{ respuesta.payment_type_code }}</li>
+                <li class="list-group-item"><strong>Código de respuesta:</strong> {{ respuesta.response_code }}</li>
+            </ul>
+        </div>
+    {% else %}
+        <div class="alert alert-danger">
+            El pago fue rechazado o falló.
+        </div>
+        <p><strong>Estado:</strong> {{ respuesta.status }}</p>
+        <p><strong>Código de respuesta:</strong> {{ respuesta.response_code }}</p>
+    {% endif %}
+</div>
 {% endblock %}
