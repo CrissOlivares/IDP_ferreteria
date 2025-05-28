@@ -1,0 +1,32 @@
+{% extends 'miapp/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Registro de Usuario</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Nombre de Usuario:</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Email:</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Contraseña:</label>
+            <input type="password" name="password1" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Confirmar Contraseña:</label>
+            <input type="password" name="password2" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Registrarse</button>
+    </form>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning mt-3">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

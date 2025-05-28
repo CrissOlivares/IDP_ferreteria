@@ -23,6 +23,7 @@ from miapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_view, name='login'),
+    path('registro/', views.registro, name='registro'),
     path('', inicio),
     path('carrito/', views.ver_carrito, name='ver_carrito'),
     path('agregar-carrito/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
