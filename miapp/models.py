@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User  # Agrega esta línea
+from django.contrib.auth.models import User  
 
 # Definición de la tabla productos
 class Producto(models.Model):
@@ -17,6 +17,21 @@ class Carrito(models.Model):
     cantidad = models.PositiveIntegerField(default=1)
     fecha_agregado = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # ← ESTA LÍNEA
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.nombre}"
+
+class Orden(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Orden #{self.id} - {self.usuario.username}"
+
+class ItemOrden(models.Model):
+    orden = models.ForeignKey(Orden, on_delete=models.CASCADE, related_name='items')
+    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
+    cantidad = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"

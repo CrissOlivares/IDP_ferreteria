@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Producto, Carrito  
+from .models import Producto, Carrito, Orden, ItemOrden
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
@@ -8,6 +8,8 @@ import uuid
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
+
+
 
 def logout_view(request):
     logout(request)
@@ -24,8 +26,17 @@ def retorno(request):
         response = transaction.commit(token)
 
         if response['status'] == 'AUTHORIZED':
-            Carrito.objects.filter(usuario=request.user).delete()
-            messages.success(request, "¡Pago exitoso!")
+            carrito_items = Carrito.objects.filter(usuario=request.user)
+
+            orden = Orden.objects.create(usuario=request.user)
+            for item in carrito_items:
+                ItemOrden.objects.create(
+                    orden=orden,
+                    producto=item.producto,
+                    cantidad=item.cantidad
+                )
+            carrito_items.delete()
+            messages.success(request, "¡Pago exitoso! Historial guardado.")
         else:
             messages.error(request, "El pago fue rechazado.")
     except Exception as e:
@@ -88,7 +99,12 @@ def ver_carrito(request):
         return redirect('login')
 
     carrito_items = Carrito.objects.filter(usuario=request.user)
-    return render(request, 'miapp/carrito.html', {'carrito': carrito_items})
+    ordenes = Orden.objects.filter(usuario=request.user).order_by('-fecha')
+
+    return render(request, 'miapp/carrito.html', {
+        'carrito': carrito_items,
+        'ordenes': ordenes,
+    })
 def eliminar_del_carrito(request, carrito_id):
     item = get_object_or_404(Carrito, pk=carrito_id)
     producto = item.producto

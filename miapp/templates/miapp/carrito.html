@@ -31,4 +31,25 @@
         <div class="alert alert-info">No hay productos en el carrito.</div>
     {% endif %}
 </section>
+
+<!-- Historial de Compras -->
+<hr>
+<h2>Historial de Compras</h2>
+{% if ordenes %}
+    {% for orden in ordenes %}
+        <div class="card mb-3">
+            <div class="card-header">Orden #{{ orden.id }} - {{ orden.fecha|date:"d/m/Y H:i" }}</div>
+            <ul class="list-group list-group-flush">
+                {% for item in orden.items.all %}
+                    <li class="list-group-item">
+                        {{ item.cantidad }} x {{ item.producto.nombre }} - ${{ item.producto.precio }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No has realizado compras aún.</p>
+{% endif %}
+
 {% endblock %}
