@@ -19,6 +19,8 @@ def logout_view(request):
 
 @never_cache
 def retorno(request):
+    print(f"Session key: {request.session.session_key}")
+    print(f"User ID en sesión: {request.session.get('usuario_pago_id')}")
     token = request.GET.get('token_ws')
     if not token:
         messages.error(request, "Token no recibido desde Webpay.")
@@ -57,6 +59,8 @@ def retorno(request):
     return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
 @never_cache
 def pagar(request):
+    print(f"Session key: {request.session.session_key}")
+    print(f"User ID: {request.user.id}")
     if not request.user.is_authenticated:
         messages.warning(request, "Debes iniciar sesión para pagar.")
         return redirect('login')
@@ -171,6 +175,7 @@ def disminuir_cantidad(request, carrito_id):
     return redirect('ver_carrito')
 @never_cache
 def login_view(request):
+    logout(request)  
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -178,12 +183,11 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/')  
+            return redirect('/')
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
     
     return render(request, 'miapp/login.html')
-
 @never_cache
 def registro(request):
     if request.method == 'POST':
