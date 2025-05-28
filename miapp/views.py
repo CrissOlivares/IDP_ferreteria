@@ -10,12 +10,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 
 
 def logout_view(request):
     logout(request)
     return redirect('inicio')
 
+@never_cache
 def retorno(request):
     token = request.GET.get('token_ws')
     if not token:
@@ -53,7 +55,7 @@ def retorno(request):
         return redirect('ver_carrito')
 
     return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
-
+@never_cache
 def pagar(request):
     if not request.user.is_authenticated:
         messages.warning(request, "Debes iniciar sesión para pagar.")
@@ -76,6 +78,7 @@ def pagar(request):
     response = transaction.create(buy_order, session_id, total, return_url)
 
     return redirect(response['url'] + '?token_ws=' + response['token'])
+@never_cache 
 def inicio(request):
     liberar_stock_expirado()  
     productos = Producto.objects.all()
@@ -102,7 +105,7 @@ def agregar_al_carrito(request, producto_id):
     return redirect('ver_carrito')
 
 
-
+@never_cache
 def ver_carrito(request):
     if not request.user.is_authenticated:
         messages.warning(request, "Debes iniciar sesión para ver tu carrito.")
@@ -166,7 +169,7 @@ def disminuir_cantidad(request, carrito_id):
         item.delete()
 
     return redirect('ver_carrito')
-
+@never_cache
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -181,7 +184,7 @@ def login_view(request):
     
     return render(request, 'miapp/login.html')
 
-
+@never_cache
 def registro(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -200,7 +203,7 @@ def registro(request):
 
     return render(request, 'miapp/registro.html')
 
-
+@never_cache
 @staff_member_required
 def historial_admin(request):
     ordenes = Orden.objects.all().order_by('-fecha')
