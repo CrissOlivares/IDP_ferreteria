@@ -5,9 +5,11 @@ from django.utils import timezone
 from datetime import timedelta
 from .transbank_config import get_transaction
 import uuid
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+
 def retorno(request):
     token = request.GET.get('token_ws')
-
     # ✅ Validación inmediata
     if not token:
         messages.error(request, "Token no recibido desde Webpay.")
@@ -127,3 +129,36 @@ def disminuir_cantidad(request, carrito_id):
         item.delete()
 
     return redirect('ver_carrito')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('/')  # Redirige a inicio o donde tú quieras
+        else:
+            messages.error(request, 'Usuario o contraseña incorrectos')
+    
+    return render(request, 'miapp/login.html')
+
+
+def registro(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        email = request.POST.get('email')
+
+        if password1 != password2:
+            messages.error(request, 'Las contraseñas no coinciden.')
+        elif User.objects.filter(username=username).exists():
+            messages.error(request, 'El nombre de usuario ya está en uso.')
+        else:
+            user = User.objects.create_user(username=username, password=password1, email=email)
+            login(request, user)  # inicia sesión después de registrarse
+            return redirect('inicio')
+
+    return render(request, 'miapp/registro.html')
