@@ -59,8 +59,8 @@ def retorno(request):
     return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
 @never_cache
 def pagar(request):
-    print(f"Session key: {request.session.session_key}")
-    print(f"User ID: {request.user.id}")
+    print(f"Session key antes: {request.session.session_key}")
+
     if not request.user.is_authenticated:
         messages.warning(request, "Debes iniciar sesión para pagar.")
         return redirect('login')
@@ -72,9 +72,13 @@ def pagar(request):
 
     total = sum(item.producto.precio * item.cantidad for item in carrito_items)
     buy_order = str(uuid.uuid4())[:26]
-    session_id = request.session.session_key or str(uuid.uuid4())[:61]
-    return_url = 'http://localhost:8000/retorno/'
 
+    # Django crea y registre la sesión
+    if not request.session.session_key:
+        request.session.save()
+
+    session_id = request.session.session_key
+    return_url = 'http://localhost:8000/retorno/'
 
     request.session['usuario_pago_id'] = request.user.id
 
