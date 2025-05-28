@@ -7,10 +7,14 @@ from .transbank_config import get_transaction
 import uuid
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
+
+def logout_view(request):
+    logout(request)
+    return redirect('inicio')
 
 def retorno(request):
     token = request.GET.get('token_ws')
-    # ✅ Validación inmediata
     if not token:
         messages.error(request, "Token no recibido desde Webpay.")
         return redirect('ver_carrito')
@@ -20,7 +24,7 @@ def retorno(request):
         response = transaction.commit(token)
 
         if response['status'] == 'AUTHORIZED':
-            Carrito.objects.all().delete()
+            Carrito.objects.filter(usuario=request.user).delete()
             messages.success(request, "¡Pago exitoso!")
         else:
             messages.error(request, "El pago fue rechazado.")
@@ -30,26 +34,25 @@ def retorno(request):
 
     return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
 
-    return render(request, 'miapp/pago_resultado.html', {'respuesta': response})
 def pagar(request):
-    carrito_items = Carrito.objects.all()
+    if not request.user.is_authenticated:
+        messages.warning(request, "Debes iniciar sesión para pagar.")
+        return redirect('login')
 
+    carrito_items = Carrito.objects.filter(usuario=request.user)
     if not carrito_items:
         messages.warning(request, "El carrito está vacío.")
         return redirect('ver_carrito')
 
-    # Calcular el total
     total = sum(item.producto.precio * item.cantidad for item in carrito_items)
-
-    # Crear orden y sesión única
-    buy_order = str(uuid.uuid4())[:26]  # Orden única, limitada a 26 caracteres
+    buy_order = str(uuid.uuid4())[:26]
     session_id = request.session.session_key or str(uuid.uuid4())[:61]
-    return_url = 'http://localhost:8000/retorno/'  # Cambia esto a tu dominio en producción
+    return_url = 'http://localhost:8000/retorno/'
 
     transaction = get_transaction()
     response = transaction.create(buy_order, session_id, total, return_url)
 
-    # Opcional: guardar temporalmente los datos de la compra en sesión o base de datos si necesitas mostrarlos luego
+    return redirect(response['url'] + '?token_ws=' + response['token'])
 
     return redirect(response['url'] + '?token_ws=' + response['token'])
 def inicio(request):
@@ -60,11 +63,15 @@ def inicio(request):
 def agregar_al_carrito(request, producto_id):
     producto = get_object_or_404(Producto, pk=producto_id)
 
+    if not request.user.is_authenticated:
+        messages.warning(request, "Debes iniciar sesión para agregar productos al carrito.")
+        return redirect('login')
+
     if producto.stock > 0:
         producto.stock -= 1
         producto.save()
 
-        item, creado = Carrito.objects.get_or_create(producto=producto)
+        item, creado = Carrito.objects.get_or_create(producto=producto, usuario=request.user)
         if not creado:
             item.cantidad += 1
         item.save()
@@ -74,10 +81,14 @@ def agregar_al_carrito(request, producto_id):
     return redirect('ver_carrito')
 
 
-def ver_carrito(request):
-    carrito_items = Carrito.objects.all()  
-    return render(request, 'miapp/carrito.html', {'carrito': carrito_items})
 
+def ver_carrito(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, "Debes iniciar sesión para ver tu carrito.")
+        return redirect('login')
+
+    carrito_items = Carrito.objects.filter(usuario=request.user)
+    return render(request, 'miapp/carrito.html', {'carrito': carrito_items})
 def eliminar_del_carrito(request, carrito_id):
     item = get_object_or_404(Carrito, pk=carrito_id)
     producto = item.producto
@@ -138,7 +149,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/')  # Redirige a inicio o donde tú quieras
+            return redirect('/')  
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
     

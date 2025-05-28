@@ -1,20 +1,15 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Titulo{% endblock %}</title>
-    
-    <!-- Bootstrap 5 CSS desde CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Leaflet.js + OpenStreetMap -->
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-
-    <!-- Si quieres estilos personalizados -->
     <style>
         body {
             background-color: #f5f5f5;
@@ -22,43 +17,66 @@
     </style>
 </head>
 <body>
-    <header style="background-color: #343a40; height: 60px; position: relative; width: 100%;">
-        <div class="container h-100 d-flex align-items-center position-relative">
-            <div class="d-flex align-items-center" style="flex: 1;">
-                <img src="{% static 'imagenes/logo.jpg' %}" alt="Logo" style="height: 65px;">
-            </div>
-            <div style="position: absolute; left: 90%; transform: translateX(0%);">
-                <button type="button" class="btn btn-warning">Carrito
-                    
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" fill="currentColor" class="bi bi-cart" viewBox="0 0 20 20">
-                      <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .485.379L2.89 5H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 14H4a.5.5 0 0 1-.491-.408L1.01 2H.5a.5.5 0 0 1-.5-.5zM3.14 6l1.25 6h7.22l1.25-6H3.14z"/>
-                      <path d="M5.5 16a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm7 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+    <header style="background-color: #343a40; height: 60px; width: 100%;">
+        <div class="container h-100 d-flex align-items-center justify-content-between">
+
+            <!-- Botón Inicio + Logo -->
+<div class="d-flex align-items-center gap-3 text-white">
+    <a href="{% url 'inicio' %}" class="btn btn-warning d-flex align-items-center">
+        Ir al inicio
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-house ms-2" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 3.293l6 6V13.5a1.5 1.5 0 0 1-1.5 1.5H10a.5.5 0 0 1-.5-.5V11a1 1 0 0 0-2 0v3.5a.5.5 0 0 1-.5.5H3.5A1.5 1.5 0 0 1 2 13.5V9.293l6-6zM7.293 2.5a1 1 0 0 1 1.414 0l6.5 6.5a.5.5 0 0 1-.707.707L8 3.207 1.5 9.707a.5.5 0 1 1-.707-.707l6.5-6.5z"/>
+        </svg>
+    </a>
+    <img src="{% static 'imagenes/logo.jpg' %}" alt="Logo" style="height: 65px;">
+</div>
+
+            <!-- Botones -->
+            <div class="d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <span class="text-white fw-bold me-2">Hola, {{ user.username }}</span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12a.5.5 0 0 1 .5.5v1A1.5 1.5 0 0 1 9 15H4a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h5a1.5 1.5 0 0 1 1.5 1.5v1a.5.5 0 0 1-1 0v-1A.5.5 0 0 0 9 2H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 1 .5-.5z"/>
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                        </svg>
+                        Cerrar sesión
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-secondary d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-box-arrow-in-right me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M6 3a.5.5 0 0 0-.5.5v2.707L3.854 4.854a.5.5 0 1 0-.708.708l2.647 2.646a.5.5 0 0 0 .708 0l2.647-2.646a.5.5 0 0 0-.708-.708L6.5 6.207V3.5A.5.5 0 0 0 6 3zm7.5-2a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z"/>
+                        </svg>
+                        Login
+                    </a>
+
+                    <a href="{% url 'registro' %}" class="btn btn-secondary d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-person-plus me-2" viewBox="0 0 16 16">
+                            <path d="M8 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm4-1a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H12.5v1.5a.5.5 0 0 1-1 0V8H10a.5.5 0 0 1 0-1h1.5V5.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M1 14s-1 0-1-1 1-4 7-4 7 3 7 4-1 1-1 1H1zm2-1h10c0-.296-.448-1.174-2.614-1.721C9.31 10.947 8.41 11 8 11s-1.31-.053-2.386-.721C3.448 11.826 3 12.704 3 13z"/>
+                        </svg>
+                        Registro
+                    </a>
+                {% endif %}
+
+                <!-- Carrito siempre visible -->
+                <a href="{% url 'ver_carrito' %}" class="btn btn-warning d-flex align-items-center">
+                    Carrito
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="25" fill="currentColor" class="bi bi-cart ms-2" viewBox="0 0 20 20">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .485.379L2.89 5H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 14H4a.5.5 0 0 1-.491-.408L1.01 2H.5a.5.5 0 0 1-.5-.5zM3.14 6l1.25 6h7.22l1.25-6H3.14z"/>
+                        <path d="M5.5 16a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm7 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
                     </svg>
-                </button>
+                </a>
             </div>
-            <div style="position: absolute; left: 80%; transform: translateX(0%);">
-            <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
-            <a href="{% url 'registro' %}" class="btn btn-outline-success me-2">Registro</a>
-            </div>
-            <div style="flex: 1;"></div>
         </div>
-        <nav class="navbar">
-            <ul class="nav-links">
-            </ul>
-            <div class="search-box">
-              <input type="text" placeholder="Buscar">
-              <button><i class="fas fa-search"></i></button>
-            </div>
-          </nav>
     </header>
+
     <div class="container mt-5">
-        {% block content %} 
-        <!-- Aquí va el contenido específico de cada página -->
+        {% block content %}
+        <!-- contenido dinámico -->
         {% endblock %}
     </div>
 
-    <!-- Bootstrap 5 JS (opcional si usas componentes como modales o dropdowns) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
