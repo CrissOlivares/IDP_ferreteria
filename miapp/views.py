@@ -8,7 +8,8 @@ import uuid
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
 
 
 def logout_view(request):
@@ -21,14 +22,22 @@ def retorno(request):
         messages.error(request, "Token no recibido desde Webpay.")
         return redirect('ver_carrito')
 
+    # 🟢 Recuperar el usuario desde la sesión
+    user_id = request.session.get('usuario_pago_id')
+    if not user_id:
+        messages.error(request, "No se pudo verificar al usuario para completar la compra.")
+        return redirect('login')
+
+    user = get_object_or_404(User, id=user_id)
+
     transaction = get_transaction()
     try:
         response = transaction.commit(token)
 
         if response['status'] == 'AUTHORIZED':
-            carrito_items = Carrito.objects.filter(usuario=request.user)
+            carrito_items = Carrito.objects.filter(usuario=user)
 
-            orden = Orden.objects.create(usuario=request.user)
+            orden = Orden.objects.create(usuario=user)
             for item in carrito_items:
                 ItemOrden.objects.create(
                     orden=orden,
@@ -60,10 +69,11 @@ def pagar(request):
     session_id = request.session.session_key or str(uuid.uuid4())[:61]
     return_url = 'http://localhost:8000/retorno/'
 
+
+    request.session['usuario_pago_id'] = request.user.id
+
     transaction = get_transaction()
     response = transaction.create(buy_order, session_id, total, return_url)
-
-    return redirect(response['url'] + '?token_ws=' + response['token'])
 
     return redirect(response['url'] + '?token_ws=' + response['token'])
 def inicio(request):
@@ -189,3 +199,9 @@ def registro(request):
             return redirect('inicio')
 
     return render(request, 'miapp/registro.html')
+
+
+@staff_member_required
+def historial_admin(request):
+    ordenes = Orden.objects.all().order_by('-fecha')
+    return render(request, 'miapp/historial_admin.html', {'ordenes': ordenes})

@@ -1,0 +1,23 @@
+{% extends 'miapp/base.html' %}
+{% block title %}Historial de Órdenes (Admin){% endblock %}
+{% block content %}
+<h1>Historial de Órdenes</h1>
+{% if ordenes %}
+    {% for orden in ordenes %}
+        <div class="card mb-3">
+            <div class="card-header">
+                Orden #{{ orden.id }} - {{ orden.usuario.username }} - {{ orden.fecha|date:"d/m/Y H:i" }}
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for item in orden.items.all %}
+                    <li class="list-group-item">
+                        {{ item.cantidad }} x {{ item.producto.nombre }} - ${{ item.producto.precio }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No hay órdenes aún.</p>
+{% endif %}
+{% endblock %}

@@ -22,6 +22,11 @@
 
             <!-- Botón Inicio + Logo -->
 <div class="d-flex align-items-center gap-3 text-white">
+    {% if user.is_authenticated and user.is_staff %}
+    <a href="{% url 'historial_admin' %}" class="btn btn-outline-info">
+        Ver Historial
+    </a>
+{% endif %}
     <a href="{% url 'inicio' %}" class="btn btn-warning d-flex align-items-center">
         Ir al inicio
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-house ms-2" viewBox="0 0 16 16">
