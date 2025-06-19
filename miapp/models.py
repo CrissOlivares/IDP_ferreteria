@@ -10,7 +10,19 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+        
+#Def clase pedidos        
+class Pedido(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pedidos')
+    vendedor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='ventas')
+    aceptado = models.BooleanField(default=False)
+    entregado = models.BooleanField(default=False)
+    fecha = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Pedido de {self.producto} por {self.cliente}"
 # Definición de la tabla carrito
 class Carrito(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

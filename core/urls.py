@@ -17,6 +17,9 @@ urlpatterns = [
     path('retorno/', views.retorno, name='retorno'),
     path('pago_resultado/', views.retorno, name='retorno'),
     path('logout/', views.logout_view, name='logout'),
-      path('historial/', views.historial_admin, name='historial_admin'),
-    
+    path('historial/', views.historial_admin, name='historial_admin'),
+    path('vendedor/', views.panel_vendedor, name='panel_vendedor'),
+    path('vendedor/aceptar/<int:pedido_id>/', views.aceptar_pedido, name='aceptar_pedido'),
+    path('redirigir_usuario/', views.redirigir_usuario, name='redirigir_usuario'),
+
 ]

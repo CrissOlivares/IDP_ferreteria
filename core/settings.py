@@ -16,6 +16,7 @@ from transbank.webpay.webpay_plus.transaction import Transaction #importasr cred
 
 from django.contrib.messages import constants as messages
 
+LOGIN_REDIRECT_URL = '/redirigir_usuario/'
 
 TRANSBANK_COMMERCE_CODE = os.getenv('TBK_API_KEY_ID', '597055555532')  # integración
 TRANSBANK_API_KEY = os.getenv('TBK_API_KEY_SECRET', '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C')

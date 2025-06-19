@@ -11,6 +11,23 @@ from django.contrib.auth import logout
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
+from .models import Pedido
+from django.contrib.auth.decorators import user_passes_test
+# miapp/views.py
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
+
+
+@login_required
+def redirigir_usuario(request):
+    print("Grupos del usuario:", request.user.groups.all())  # ← línea clave
+    if request.user.groups.filter(name='Vendedores').exists():
+        print("Redirigiendo al panel del vendedor")
+        return redirect('panel_vendedor')
+    else:
+        print("Redirigiendo al home")
+        return redirect('inicio')
 
 
 def logout_view(request):
@@ -47,6 +64,13 @@ def retorno(request):
                     orden=orden,
                     producto=item.producto,
                     cantidad=item.cantidad
+                )
+                 # Crear pedido para el panel del vendedor
+                Pedido.objects.create(
+                    producto=item.producto,
+                    cantidad=item.cantidad,
+                    cliente=user,
+                    aceptado=False  
                 )
             carrito_items.delete()
             messages.success(request, "¡Pago exitoso! Historial guardado.")
@@ -187,7 +211,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/')
+            return redirect('redirigir_usuario')
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
     
@@ -210,7 +234,24 @@ def registro(request):
             return redirect('inicio')
 
     return render(request, 'miapp/registro.html')
+def es_vendedor(user):
+    return user.groups.filter(name='Vendedores').exists()
 
+
+@user_passes_test(es_vendedor)
+def panel_vendedor(request):
+    pedidos = Pedido.objects.filter(vendedor__isnull=True)
+    return render(request, 'miapp/panel_vendedor.html', {'pedidos': pedidos})
+
+
+@user_passes_test(es_vendedor)
+def aceptar_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    pedido.vendedor = request.user
+    pedido.aceptado = True
+    pedido.save()
+    return redirect('panel_vendedor')
+    
 @never_cache
 @staff_member_required
 def historial_admin(request):

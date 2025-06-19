@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from .models import Producto, Carrito, Orden, ItemOrden
 
 # Mostrar los productos comprados dentro de cada orden 
@@ -23,7 +24,8 @@ class OrdenAdmin(admin.ModelAdmin):
         )
         return f"${total:,}".replace(",", ".") 
     total_gastado.short_description = 'Total Gastado'
-
+ #grupo vendedor   
+Group.objects.get_or_create(name='Vendedores')
 # Registro de modelos
 admin.site.register(Producto)
 admin.site.register(Carrito)

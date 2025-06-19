@@ -1,0 +1,34 @@
+{% extends 'miapp/base.html' %}
+
+{% block title %}Panel del Vendedor{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">Pedidos Pendientes</h1>
+
+{% if pedidos %}
+    <div class="row">
+        {% for pedido in pedidos %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ pedido.producto.nombre }}</h5>
+                        <p class="card-text">
+                            <strong>Cantidad:</strong> {{ pedido.cantidad }}<br>
+                            <strong>Cliente:</strong> {{ pedido.cliente.username }}<br>
+                            <strong>Fecha:</strong> {{ pedido.fecha|date:"d M Y H:i" }}
+                        </p>
+                        <form method="post" action="{% url 'aceptar_pedido' pedido.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100">Aceptar Pedido</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        No hay pedidos por aceptar.
+    </div>
+{% endif %}
+{% endblock %}
